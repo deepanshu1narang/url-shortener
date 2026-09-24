@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        #form-inner-div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+
+            input {
+                width: 30%;
+            }
+
+            button {
+                width: 10%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>URL shortener</h1>
+    <div>
+        <form method="POST" action="/url">
+            <div id="form-inner-div">
+                <label>Enter the original url</label>
+                <input type="text" name="url" placeholder="www.example.com" />
+                <button type="submit">Generate</button>
+            </div>
+        </form>
+    </div>
+    <h4>Genereated Urls</h4>
+    <ul>
+        <% urls.forEach(url=> {
+            const fullUrl = `http://localhost:${port}/url/${url.shortId}`;
+            %>
+            <li>
+                <a href="<%= fullUrl %>" target="_blank">
+                    <%= fullUrl %>
+                </a>
+            </li>
+            <% }) %>
+
+
+</body>
+
+</html>
