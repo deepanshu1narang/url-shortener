@@ -1,5 +1,10 @@
+// Node has no build step to auto-inject .env like Vite/CRA/Metro do — this reads
+// .env and writes each KEY=VALUE onto process.env. Must run first, before any
+// other file (e.g. controllers reading process.env.JWT_SECRET) is required.
+require('dotenv').config();
 const express = require('express');
 const urlRoute = require('./routes/url');
+const userRoute = require('./routes/user');
 const staticRoute = require('./routes/staticRouter');
 const { connectMongoDB } = require('./connection');
 const path = require('node:path');
@@ -30,7 +35,11 @@ app.use(express.json({ extended: false })); // parses JSON request bodies (e.g. 
 //     });
 
 // routes
+// url
 app.use("/url", urlRoute);
 app.use("/", staticRoute);
+
+// user
+app.use(userRoute);
 
 app.listen(PORT, () => console.log(`server started at PORT: ${PORT}`));

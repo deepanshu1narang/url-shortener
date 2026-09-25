@@ -1,15 +1,24 @@
-const express = require('express');
-const { fnGenerateNewShortUrl, fnRedirectToOriginalUrl, fnGetAnalytics } = require('../controllers/url');
+const express = require("express");
+const {
+  fnGenerateNewShortUrl,
+  fnRedirectToOriginalUrl,
+  fnGetAnalytics,
+  fnFindMyUrls,
+} = require("../controllers/url");
+const { requireAuthMiddleware } = require("../middlewares/user");
 
 const router = express.Router();
 
 router.route("/")
-    .post(fnGenerateNewShortUrl);
+    .post(requireAuthMiddleware, fnGenerateNewShortUrl);
+
+router.route("/analytics/:shortId")
+    .get(requireAuthMiddleware, fnGetAnalytics);
+
+router.route("/my_urls")
+    .get(requireAuthMiddleware, fnFindMyUrls);
 
 router.route("/:shortId")
     .get(fnRedirectToOriginalUrl);
-
-router.route("/analytics/:shortId")
-    .get(fnGetAnalytics);
 
 module.exports = router;

@@ -22,7 +22,8 @@ async function fnGenerateNewShortUrl(req, res) {
     await URL.create({
         shortId,
         redirectUrl: body.url,
-        visitHistory: []
+        visitHistory: [],
+        createdBy: req.user.id,
     })
 
     return res.status(201).json({
@@ -62,4 +63,11 @@ async function fnGetAnalytics(req, res) {
     });
 }
 
-module.exports = { fnGenerateNewShortUrl, fnRedirectToOriginalUrl, fnGetAnalytics };
+async function fnFindMyUrls(req, res) {
+    const myUrls = await URL.find({ createdBy: req.user.id });
+    return res.status(200).json({
+        data: myUrls
+    });
+}
+
+module.exports = { fnGenerateNewShortUrl, fnRedirectToOriginalUrl, fnGetAnalytics, fnFindMyUrls };

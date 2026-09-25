@@ -34,16 +34,38 @@
         </form>
     </div>
     <h4>Genereated Urls</h4>
-    <ul>
-        <% urls.forEach(url=> {
-            const fullUrl = `http://localhost:${port}/url/${url.shortId}`;
-            %>
-            <li>
-                <a href="<%= fullUrl %>" target="_blank">
-                    <%= fullUrl %>
-                </a>
-            </li>
-            <% }) %>
+    <% if (!locals.urls || locals.urls.length===0) { %>
+        <p>No URLs generated yet.</p>
+    <% } else { %>
+        <table border="1" cellpadding="6" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>S. No.</th>
+                    <th>shortId</th>
+                    <th>short url</th>
+                    <th>redirects (full url)</th>
+                    <th>Number of clicks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% locals.urls.forEach((url, index)=> {
+                    const fullUrl = `http://localhost:${locals.port}/url/${url.shortId}`;
+                    %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= url.shortId %></td>
+                        <td>
+                            <a href="<%= fullUrl %>" target="_blank">
+                                <%= fullUrl %>
+                            </a>
+                        </td>
+                        <td><a href="<%= url.redirectUrl %>"><%= url.redirectUrl %></a></td>
+                        <td><%= url.visitHistory.length %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
 
 
 </body>
