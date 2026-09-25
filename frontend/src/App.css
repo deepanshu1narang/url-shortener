@@ -1,0 +1,133 @@
+.auth-page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.auth-form h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.auth-form input {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.auth-form button {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.auth-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error {
+  color: #e5484d;
+  font-size: 14px;
+}
+
+.shortener-page {
+  flex: 1;
+  padding: 32px 24px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.shortener-page header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shortener-page header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.logout {
+  font: inherit;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.url-form {
+  display: flex;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.url-form input {
+  flex: 1;
+  max-width: 420px;
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.url-form button {
+  font: inherit;
+  padding: 10px 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+th {
+  color: var(--text-h);
+  background: var(--code-bg);
+}

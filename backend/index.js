@@ -9,8 +9,15 @@ const staticRoute = require('./routes/staticRouter');
 const { connectMongoDB } = require('./connection');
 const path = require('node:path');
 const { PORT } = require('./constants');
-
 const app = express();
+const cors = require('cors');
+
+const corsOptions = {
+    origin: '*', // Only allow this domain (* means all )
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],   // Allowed HTTP actions
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed custom headers
+};
+
 
 // connection
 connectMongoDB("mongodb://localhost:27017/short-url")
@@ -24,6 +31,8 @@ app.set('views', path.resolve('./view'));
 app.use(express.urlencoded({ extended: false })); // parses form-encoded bodies (e.g. HTML <form> submits) into req.body
 app.use(express.json({ extended: false })); // parses JSON request bodies (e.g. Postman/fetch with Content-Type: application/json) into req.body
 
+// Apply configured settings globally
+app.use(cors(corsOptions)); 
 
 // app.get("/ssr/url", async (req, res) => {
 //     const allUrls = await URL.find({});

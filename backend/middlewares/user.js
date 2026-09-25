@@ -9,7 +9,8 @@ function requireAuthMiddleware(req, res, next) {
       .json({ message: "Missing token... you are not authenticated!" });
 
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    const user = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = user;
     next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
