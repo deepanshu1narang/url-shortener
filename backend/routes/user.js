@@ -9,7 +9,6 @@ const {
   fnGetAllUsersExceptMe,
 } = require("../controllers/user");
 const { requireAuthMiddleware, requireRoleMiddleware } = require("../middlewares/user");
-const { fnDeleteUrl } = require("../controllers/url");
 const router = express.Router();
 
 router.route("/sign_up")

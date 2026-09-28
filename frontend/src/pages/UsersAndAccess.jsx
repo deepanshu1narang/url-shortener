@@ -135,7 +135,7 @@ export default function UsersAndAccess() {
         </select>
       </form>
 
-      <fieldset className="role-fieldset">
+      {userId && <fieldset className="role-fieldset">
         <legend>Roles to set</legend>
         {MANAGEABLE_ROLES.map((role) => (
           <label key={role} className="role-checkbox">
@@ -147,7 +147,7 @@ export default function UsersAndAccess() {
             {role}
           </label>
         ))}
-      </fieldset>
+      </fieldset>}
 
       <div className="view-toggle">
         <button type="button" onClick={handleUpdateRoles} disabled={updating}>
