@@ -1,19 +1,19 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-async function request(path, { method = "GET", body, token } = {}) {
-  const headers = { "Content-Type": "application/json" };
-  if (token) headers.Authorization = `Bearer ${token}`;
-
+async function request(path, { method = "GET", body } = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
-    headers,
+    headers: { "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
+    credentials: "include", // send/receive the httpOnly cookie cross-origin
   });
 
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    throw new Error(data.message || `Request failed with ${res.status}`);
+    const error = new Error(data.message || `Request failed with ${res.status}`);
+    error.status = res.status;
+    throw error;
   }
 
   return data;
@@ -27,14 +27,18 @@ export function signin({ email, password }) {
   return request("/sign_in", { method: "POST", body: { email, password } });
 }
 
-export function fetchMyUrls(token) {
-  return request("/url/my_urls", { token });
+export function fetchMyUrls() {
+  return request("/url/my_urls");
 }
 
-export function createShortUrl(url, token) {
-  return request("/url", { method: "POST", body: { url }, token });
+export function createShortUrl(url) {
+  return request("/url", { method: "POST", body: { url } });
 }
 
-export function signout(token) {
-  return request("/sign_out", { method: "POST", token });
+export function signout() {
+  return request("/sign_out", { method: "POST" });
+}
+
+export function fetchMe() {
+  return request("/me");
 }

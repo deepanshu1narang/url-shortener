@@ -1,38 +1,41 @@
 // Node has no build step to auto-inject .env like Vite/CRA/Metro do — this reads
 // .env and writes each KEY=VALUE onto process.env. Must run first, before any
 // other file (e.g. controllers reading process.env.JWT_SECRET) is required.
-require('dotenv').config();
-const express = require('express');
-const urlRoute = require('./routes/url');
-const userRoute = require('./routes/user');
-const staticRoute = require('./routes/staticRouter');
-const { connectMongoDB } = require('./connection');
-const path = require('node:path');
-const { PORT } = require('./constants');
+require("dotenv").config();
+const express = require("express");
+const urlRoute = require("./routes/url");
+const userRoute = require("./routes/user");
+const staticRoute = require("./routes/staticRouter");
+const { connectMongoDB } = require("./connection");
+const path = require("node:path");
+const { PORT } = require("./constants");
 const app = express();
-const cors = require('cors');
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 const corsOptions = {
-    origin: '*', // Only allow this domain (* means all )
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],   // Allowed HTTP actions
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed custom headers
+  // origin: '*', // Only allow this domain (* means all )
+  origin: "http://localhost:5173", // explicit origin, not "*"
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP actions
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed custom headers
 };
 
-
 // connection
-connectMongoDB("mongodb://localhost:27017/short-url")
-    .then(() => console.log("Mongo DB running"));
+connectMongoDB("mongodb://localhost:27017/short-url").then(() =>
+  console.log("Mongo DB running"),
+);
 
-app.set('view engine', 'ejs');
-app.set('views', path.resolve('./view'));
+app.set("view engine", "ejs");
+app.set("views", path.resolve("./view"));
 
 // schema - done and used in controllers
 // middlewares
 app.use(express.urlencoded({ extended: false })); // parses form-encoded bodies (e.g. HTML <form> submits) into req.body
 app.use(express.json({ extended: false })); // parses JSON request bodies (e.g. Postman/fetch with Content-Type: application/json) into req.body
-
+app.use(cookieParser());
 // Apply configured settings globally
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 
 // app.get("/ssr/url", async (req, res) => {
 //     const allUrls = await URL.find({});

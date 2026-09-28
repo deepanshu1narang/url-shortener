@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signin } from "../api/api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,8 +16,8 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const data = await signin({ email, password });
-      login(data.token);
+      await signin({ email, password });
+      login();
       navigate("/");
     } catch (err) {
       setError(err.message);

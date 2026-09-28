@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 
 function requireAuthMiddleware(req, res, next) {
-  const authToken = req.headers.authorization;
-  const token = authToken?.startsWith("Bearer ") ? authToken.slice(7) : null;
+  // const authToken = req.headers.authorization;
+  // const token = authToken?.startsWith("Bearer ") ? authToken.slice(7) : null;
+  const token = req.cookies.token;
   if (!token)
     return res
       .status(401)

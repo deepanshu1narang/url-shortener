@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createShortUrl, fetchMyUrls } from "../api/api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Shortener() {
-  const { token, logout } = useAuth();
+  const { logout, markSignedOut } = useAuth();
+  const navigate = useNavigate();
   const [urls, setUrls] = useState([]);
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
@@ -15,20 +17,47 @@ export default function Shortener() {
   async function handleLogout() {
     setLoggingOut(true);
     await logout();
-    // no need to reset loggingOut — ProtectedRoute redirects away once token clears
+    // no need to reset loggingOut — ProtectedRoute redirects away once isAuthenticated clears
+  }
+
+  // A httpOnly cookie can't be checked from JS up front, so this fetch doubles as the
+  // "is there actually a valid session" check on first load (see ProtectedRoute).
+  function handleAuthFailure() {
+    markSignedOut();
+    navigate("/login", { replace: true });
   }
 
   async function loadUrls() {
     try {
-      const data = await fetchMyUrls(token);
+      const data = await fetchMyUrls();
       setUrls(data.data);
     } catch (err) {
+      if (err.status === 401) return handleAuthFailure();
       setError(err.message);
     }
   }
 
   useEffect(() => {
-    loadUrls();
+    let ignore = false;
+
+    async function loadInitialUrls() {
+      try {
+        const data = await fetchMyUrls();
+        if (!ignore) {
+          setUrls(data.data);
+        }
+      } catch (err) {
+        if (ignore) return;
+        if (err.status === 401) return handleAuthFailure();
+        setError(err.message);
+      }
+    }
+
+    loadInitialUrls();
+
+    return () => {
+      ignore = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -37,10 +66,11 @@ export default function Shortener() {
     setError("");
     setLoading(true);
     try {
-      await createShortUrl(url, token);
+      await createShortUrl(url);
       setUrl("");
       await loadUrls();
     } catch (err) {
+      if (err.status === 401) return handleAuthFailure();
       setError(err.message);
     } finally {
       setLoading(false);
