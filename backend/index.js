@@ -17,7 +17,7 @@ const corsOptions = {
   // origin: '*', // Only allow this domain (* means all )
   origin: "http://localhost:5173", // explicit origin, not "*"
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP actions
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allowed HTTP actions
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed custom headers
 };
 

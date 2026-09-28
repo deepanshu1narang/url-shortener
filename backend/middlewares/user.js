@@ -21,4 +21,19 @@ function requireAuthMiddleware(req, res, next) {
   }
 }
 
-module.exports = { requireAuthMiddleware };
+function requireRoleMiddleware(...allowedRoles) {
+  return function (req, res, next) {
+    const hasAccess = allowedRoles.some((role) =>
+      req.user.roles.includes(role),
+    );
+    if (hasAccess || req.user.roles.includes("super_admin")) {
+      return next();
+    }
+
+    return res
+      .status(403)
+      .json({ message: "You are not authorised for this role" });
+  };
+}
+
+module.exports = { requireAuthMiddleware, requireRoleMiddleware };

@@ -19,8 +19,8 @@ async function request(path, { method = "GET", body } = {}) {
   return data;
 }
 
-export function signup({ name, email, password }) {
-  return request("/sign_up", { method: "POST", body: { name, email, password } });
+export function signup({ name, email, password, roles }) {
+  return request("/sign_up", { method: "POST", body: { name, email, password, roles } });
 }
 
 export function signin({ email, password }) {
@@ -29,6 +29,10 @@ export function signin({ email, password }) {
 
 export function fetchMyUrls() {
   return request("/url/my_urls");
+}
+
+export function fetchAllUrls() {
+  return request("/url/all_urls");
 }
 
 export function createShortUrl(url) {
@@ -41,4 +45,24 @@ export function signout() {
 
 export function fetchMe() {
   return request("/me");
+}
+
+export function fetchAnalytics(shortId) {
+  return request(`/url/analytics/${shortId}`);
+}
+
+export function deleteUrl(shortId) {
+  return request(`/url/delete/${shortId}`, { method: "DELETE" });
+}
+
+export function updateUserRoles(id, roles) {
+  return request(`/update/${id}`, { method: "PATCH", body: { roles } });
+}
+
+export function deleteUser(id) {
+  return request(`/delete/${id}`, { method: "DELETE" });
+}
+
+export function fetchAllUsersExceptMe() {
+  return request("/all_users");
 }
