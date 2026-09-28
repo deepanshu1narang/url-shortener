@@ -1,42 +1,45 @@
-import { createContext, useContext, useState } from "react";
-import { signout as signoutRequest } from "../api/api";
-
-const AuthContext = createContext(null);
-
-const STORAGE_KEY = "token";
+import { useEffect, useState } from "react";
+import { fetchMe, signout as signoutRequest } from "../api/api";
+import { AuthContext } from "./authContextObject";
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem(STORAGE_KEY));
+  // Three states, not two: null = "checking" (httpOnly cookie can't be read by JS, so
+  // on first load we genuinely don't know if a valid session exists until we ask the
+  // server), true = known logged in, false = known logged out.
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
-  function login(newToken) {
-    localStorage.setItem(STORAGE_KEY, newToken);
-    setToken(newToken);
+  useEffect(() => {
+    // One cheap call on app load resolves the unknown — this is /me's whole job,
+    // decoupled from whatever the actual pages need to fetch.
+    fetchMe()
+      .then(() => setIsAuthenticated(true))
+      .catch(() => setIsAuthenticated(false));
+  }, []);
+
+  function login() {
+    setIsAuthenticated(true);
+  }
+
+  // Call this when a protected request comes back 401 mid-session (cookie expired,
+  // or was revoked) — no API call, just stops treating the user as logged in.
+  function markSignedOut() {
+    setIsAuthenticated(false);
   }
 
   async function logout() {
-    if (token) {
-      try {
-        // Tell the backend to blocklist this token so it stops working immediately,
-        // not just once it naturally expires. Clear local state either way, so the
-        // user isn't stuck logged in on this device if the request fails.
-        await signoutRequest(token);
-      } catch (err) {
-        console.error("Sign out request failed:", err);
-      }
+    try {
+      await signoutRequest();
+    } catch (err) {
+      console.error("Sign out request failed:", err);
     }
-    localStorage.removeItem(STORAGE_KEY);
-    setToken(null);
+    // Clear local state either way, so the user isn't stuck looking logged in on
+    // this device even if the request itself failed.
+    setIsAuthenticated(false);
   }
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated: Boolean(token), login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, markSignedOut }}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
 }

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signin } from "../api/api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
+import PasswordInput from "../components/PasswordInput";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,9 +17,9 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const data = await signin({ email, password });
-      login(data.token);
-      navigate("/");
+      await signin({ email, password });
+      login();
+      navigate("/home");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,7 +38,7 @@ export default function Login() {
         </label>
         <label>
           Password
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
         <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Log in"}
